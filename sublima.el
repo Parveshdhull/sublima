@@ -3,7 +3,7 @@
 (make-directory (expand-file-name "~/.emacs.d/sublima") t)
 
 
-;; Create Sublime Scratch Buffer
+;; Create Sublima Scratch Buffer
 (defun sublima-scratch()
   (interactive)
   (let ((scratch-file (make-temp-file (expand-file-name "~/.emacs.d/sublima/scratch-"))))
@@ -13,18 +13,16 @@
 ;; Auto Delete File on buffer Kill
 (defun sublima-delete-associated-file ()
   (if (string-prefix-p (expand-file-name "~/.emacs.d/sublima") (buffer-file-name))
-      (delete-file (buffer-file-name))))
+    (delete-file (buffer-file-name))))
 (add-hook 'kill-buffer-hook #'sublima-delete-associated-file)
 
 
 ;; Save Buffer
-(defun sublima-save-buffer ()
-  (interactive)
-  (if (and (string-prefix-p (expand-file-name "~/.emacs.d/sublima") (buffer-file-name))
-           (not (buffer-modified-p)))
-      (call-interactively 'save-buffer)
-    (call-interactively 'write-file)
-    (call-interactively 'save-buffer)))
+(defun sublima-save-as-buffer (filename)
+  (interactive "F")
+  (write-region (point-min) (point-max) filename)
+  (kill-buffer)
+  (find-file filename))
 
 
 ;; Delete empty buffers
@@ -36,12 +34,20 @@
 
 ;; Open Sublima buffer on emacs startup
 (let ((scratch-file (make-temp-file (expand-file-name "~/.emacs.d/sublima/scratch-"))))
-    (setq initial-buffer-choice scratch-file))
+  (setq initial-buffer-choice scratch-file))
 
 
 ;; Open scratch buffers on startup
 (find-file "~/.emacs.d/sublima/*" t)
 
 
-;; Auto Save on focus lost
-(add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
+;; Auto Save Scratch buffers on focus lost
+(defun sublima-save-all-buffers ()
+  (interactive)
+  (dolist (curr-buff (buffer-list))
+    (with-current-buffer curr-buff
+      (when (and (string-prefix-p (expand-file-name "~/.emacs.d/sublima") (buffer-file-name))
+        (buffer-modified-p))
+      (save-buffer))
+      )))
+(add-function :after after-focus-change-function 'sublima-save-all-buffers)
