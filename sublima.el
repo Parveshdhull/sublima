@@ -20,6 +20,7 @@
 ;; Save Buffer
 (defun sublima-save-as-buffer (filename)
   (interactive "F")
+  (save-buffer)
   (write-region (point-min) (point-max) filename)
   (kill-buffer)
   (find-file filename))
