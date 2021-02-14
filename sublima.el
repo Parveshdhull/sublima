@@ -17,7 +17,7 @@
 (add-hook 'kill-buffer-hook #'sublima-delete-associated-file)
 
 
-;; Save Buffer
+;; Save Scratch Buffer as File
 (defun sublima-save-as-buffer (filename)
   (interactive "F")
   (save-buffer)
