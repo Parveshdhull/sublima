@@ -3,7 +3,7 @@
 ## Features
 - Multiple Scratches
 - Auto Save and Restore Scratches
-- Sets Emacs startup page as sublime scratch
+- Sets Emacs startup page as sublima scratch
 - Deletes stored scratches on buffer kill
 - Auto Delete empty saved scratches
 
